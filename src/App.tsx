@@ -57,7 +57,9 @@ function readStoredNodeTypeFilters(): Record<SemanticNodeType, boolean> {
     const raw = window.localStorage.getItem(STORAGE_KEYS.nodeTypeFilters);
     if (!raw) return fallback;
 
-    const parsed = JSON.parse(raw) as Partial<Record<SemanticNodeType, boolean>>;
+    const parsed = JSON.parse(raw) as Partial<
+      Record<SemanticNodeType, boolean>
+    >;
     return {
       function: parsed.function ?? true,
       class: parsed.class ?? true,
@@ -258,11 +260,16 @@ function App() {
 
     const filteredChildrenByParent = Object.entries(
       graphState.childIdsByParent,
-    ).reduce<typeof graphState.childIdsByParent>((acc, [parentId, childIds]) => {
-      if (!visibleNodeIds.has(parentId)) return acc;
-      acc[parentId] = childIds.filter((childId) => visibleNodeIds.has(childId));
-      return acc;
-    }, {});
+    ).reduce<typeof graphState.childIdsByParent>(
+      (acc, [parentId, childIds]) => {
+        if (!visibleNodeIds.has(parentId)) return acc;
+        acc[parentId] = childIds.filter((childId) =>
+          visibleNodeIds.has(childId),
+        );
+        return acc;
+      },
+      {},
+    );
 
     const filteredManualPositions = Object.entries(
       graphState.manualPositions,

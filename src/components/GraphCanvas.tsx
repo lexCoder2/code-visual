@@ -166,7 +166,9 @@ export function GraphCanvas(props: GraphCanvasProps) {
         normalizedLabel.lastIndexOf("\\"),
       );
       const tail =
-        slashIndex >= 0 ? normalizedLabel.slice(slashIndex + 1) : normalizedLabel;
+        slashIndex >= 0
+          ? normalizedLabel.slice(slashIndex + 1)
+          : normalizedLabel;
       const hashIndex = tail.indexOf("#");
       const fileName = hashIndex >= 0 ? tail.slice(0, hashIndex) : tail;
       const anchorSuffix = hashIndex >= 0 ? tail.slice(hashIndex) : "";
@@ -293,13 +295,19 @@ export function GraphCanvas(props: GraphCanvasProps) {
               onDoubleClick={() => onNodeDoubleClick(node.id)}
             >
               <span className="node-label-row">
-                <span className="node-label-main">{structuredLabel.primary}</span>
+                <span className="node-label-main">
+                  {structuredLabel.primary}
+                </span>
                 {structuredLabel.extension ? (
-                  <span className="node-label-ext">.{structuredLabel.extension}</span>
+                  <span className="node-label-ext">
+                    .{structuredLabel.extension}
+                  </span>
                 ) : null}
               </span>
               {structuredLabel.secondary ? (
-                <span className="node-label-sub">{structuredLabel.secondary}</span>
+                <span className="node-label-sub">
+                  {structuredLabel.secondary}
+                </span>
               ) : null}
               {node.loading ? <small>Loading…</small> : null}
               {node.error ? (

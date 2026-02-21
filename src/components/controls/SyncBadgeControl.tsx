@@ -8,7 +8,9 @@ export function SyncBadgeControl(props: SyncBadgeControlProps) {
   const { syncStatus, isSyncing, autoRefreshEnabled } = props;
 
   if (isSyncing) {
-    return <div className={`control-item sync-badge ${syncStatus}`}>Syncing…</div>;
+    return (
+      <div className={`control-item sync-badge ${syncStatus}`}>Syncing…</div>
+    );
   }
 
   return (

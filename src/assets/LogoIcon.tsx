@@ -38,7 +38,13 @@ export function LogoIcon({ size = 28, className }: LogoIconProps) {
         </filter>
 
         {/* Soft drop shadow for satellite nodes */}
-        <filter id="cv-node-shadow" x="-55%" y="-55%" width="210%" height="210%">
+        <filter
+          id="cv-node-shadow"
+          x="-55%"
+          y="-55%"
+          width="210%"
+          height="210%"
+        >
           <feDropShadow
             dx="1"
             dy="1"

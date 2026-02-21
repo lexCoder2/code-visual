@@ -2,7 +2,7 @@
 
 > Navigate your codebase as a live graph. Powered by Memgraph.
 
-![Code Visual screenshot](docs/screenshot.png)
+<img src="docs/screenshot.png" alt="Code Visual screenshot" width="640" />
 
 > **Works with [code-graph-server](https://github.com/lexCoder2/code-graph-server)** — an MCP tool for VS Code and Claude that analyses your codebase and populates Memgraph with nodes and relationships. Code Visual is the visual front-end for that graph.
 
@@ -36,13 +36,13 @@ If Memgraph is unreachable the app falls back to mock data automatically.
 
 ## Environment
 
-| Variable | Default | Purpose |
-|---|---|---|
-| `VITE_MEMGRAPH_URL` | `http://localhost:4000/query` | Frontend → proxy endpoint |
-| `MEMGRAPH_BOLT_URL` | `bolt://localhost:7687` | Proxy → Memgraph Bolt |
-| `MEMGRAPH_BOLT_USER` | _(empty)_ | Bolt auth username |
-| `MEMGRAPH_BOLT_PASSWORD` | _(empty)_ | Bolt auth password |
-| `MEMGRAPH_PROXY_PORT` | `4000` | Local proxy port |
+| Variable                 | Default                       | Purpose                   |
+| ------------------------ | ----------------------------- | ------------------------- |
+| `VITE_MEMGRAPH_URL`      | `http://localhost:4000/query` | Frontend → proxy endpoint |
+| `MEMGRAPH_BOLT_URL`      | `bolt://localhost:7687`       | Proxy → Memgraph Bolt     |
+| `MEMGRAPH_BOLT_USER`     | _(empty)_                     | Bolt auth username        |
+| `MEMGRAPH_BOLT_PASSWORD` | _(empty)_                     | Bolt auth password        |
+| `MEMGRAPH_PROXY_PORT`    | `4000`                        | Local proxy port          |
 
 See [docs/architecture.md](docs/architecture.md) for a full technical breakdown.
 

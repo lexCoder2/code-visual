@@ -25,15 +25,15 @@ Every call to `mergeExpansionPage`, `mergeExpansionBatch`, `setConnectionDepth`,
 
 During the 280 ms transition, `setRenderFrame` fires on every `requestAnimationFrame` (~16 calls). Each call re-renders the tree and reschedules all of these `useMemo` hooks:
 
-| Memo | Cost | Depends on |
-|---|---|---|
-| `positionById` | O(nodes) | `renderFrame.nodes` |
-| `loopBridgeNodeById` | O(V+E) | `renderFrame.edges` |
-| `adjacencyByNode` | O(E) | `renderFrame.edges` |
-| `selectedRelativeNodeById` | O(E) | `renderFrame.edges` |
-| `selectedRelativeEdgeById` | O(E) | `renderFrame.edges` |
-| `nodeGeometryById` (GraphCanvas) | O(nodes) + math | `frame.nodes` |
-| `renderedEdges` (GraphCanvas) | O(edges) + string ops | `frame.edges`, `nodeGeometryById` |
+| Memo                             | Cost                  | Depends on                        |
+| -------------------------------- | --------------------- | --------------------------------- |
+| `positionById`                   | O(nodes)              | `renderFrame.nodes`               |
+| `loopBridgeNodeById`             | O(V+E)                | `renderFrame.edges`               |
+| `adjacencyByNode`                | O(E)                  | `renderFrame.edges`               |
+| `selectedRelativeNodeById`       | O(E)                  | `renderFrame.edges`               |
+| `selectedRelativeEdgeById`       | O(E)                  | `renderFrame.edges`               |
+| `nodeGeometryById` (GraphCanvas) | O(nodes) + math       | `frame.nodes`                     |
+| `renderedEdges` (GraphCanvas)    | O(edges) + string ops | `frame.edges`, `nodeGeometryById` |
 
 **7 memos × ~16 frames = ~112 recalculations per transition**, all O(V+E). The edges/geometry don't change during animation (only x/y positions interpolate), so this is entirely wasted work.
 
@@ -114,7 +114,9 @@ const layoutFrameRef = useRef(filteredLayoutFrame);
 layoutFrameRef.current = filteredLayoutFrame;
 
 useEffect(() => {
-  const focusPosition = layoutFrameRef.current.nodes.find(n => n.id === focusId);
+  const focusPosition = layoutFrameRef.current.nodes.find(
+    (n) => n.id === focusId,
+  );
   // ...
 }, [focusedNodeId, motionSpeedFactor]); // positionById removed
 ```
@@ -149,14 +151,18 @@ Replace `[graphState, nodeTypeFilters]` with explicit field selectors so viewpor
 // App.tsx — replace:
 const depthById = useMemo(() => {
   const map: Record<string, number> = {};
-  graphState.frame.nodes.forEach(node => { map[node.id] = node.depth; });
+  graphState.frame.nodes.forEach((node) => {
+    map[node.id] = node.depth;
+  });
   return map;
 }, [graphState.frame.nodes]);
 
 // With:
 const depthById = useMemo(() => {
   const map: Record<string, number> = {};
-  filteredLayoutFrame.nodes.forEach(node => { map[node.id] = node.depth; });
+  filteredLayoutFrame.nodes.forEach((node) => {
+    map[node.id] = node.depth;
+  });
   return map;
 }, [filteredLayoutFrame.nodes]);
 ```
@@ -183,7 +189,7 @@ adjacencyByNode: Record<string, string[]>;
 
 // Update incrementally in mergeExpansionPage:
 const nextAdjacency = { ...state.adjacencyByNode };
-children.forEach(child => {
+children.forEach((child) => {
   nextAdjacency[parentId] = [...(nextAdjacency[parentId] ?? []), child.id];
   nextAdjacency[child.id] = [...(nextAdjacency[child.id] ?? []), parentId];
 });
@@ -247,16 +253,35 @@ This removes ~2E DOM nodes from React's tree and eliminates all `renderedEdges` 
 Before rendering each node and before drawing each edge, check if the bounding box intersects the visible viewport rectangle derived from `viewport.x`, `viewport.y`, `viewport.scale` and canvas dimensions.
 
 ```tsx
-function isVisible(x: number, y: number, halfW: number, halfH: number, vp: ViewportState, canvasW: number, canvasH: number): boolean {
-  const left   = (x - halfW) * vp.scale + vp.x;
-  const right  = (x + halfW) * vp.scale + vp.x;
-  const top    = (y - halfH) * vp.scale + vp.y;
+function isVisible(
+  x: number,
+  y: number,
+  halfW: number,
+  halfH: number,
+  vp: ViewportState,
+  canvasW: number,
+  canvasH: number,
+): boolean {
+  const left = (x - halfW) * vp.scale + vp.x;
+  const right = (x + halfW) * vp.scale + vp.x;
+  const top = (y - halfH) * vp.scale + vp.y;
   const bottom = (y + halfH) * vp.scale + vp.y;
   return right >= 0 && left <= canvasW && bottom >= 0 && top <= canvasH;
 }
 
 // In node render loop:
-if (!isVisible(node.x, node.y, halfW, halfH, viewport, CANVAS.width, CANVAS.height)) return null;
+if (
+  !isVisible(
+    node.x,
+    node.y,
+    halfW,
+    halfH,
+    viewport,
+    CANVAS.width,
+    CANVAS.height,
+  )
+)
+  return null;
 ```
 
 At typical zoom levels with large graphs this can reduce rendered nodes by 60–80%.
@@ -276,8 +301,8 @@ export const useGraphStore = create<GraphStore>()(
   immer((set, get) => ({
     // ...
     mergeExpansionPage({ parentId, total, page, children }) {
-      set(draft => {
-        children.forEach(child => {
+      set((draft) => {
+        children.forEach((child) => {
           draft.nodesById[child.id] ??= createNode(child, parentId);
           draft.adjacencyByNode[parentId] ??= [];
           draft.adjacencyByNode[parentId].push(child.id);
@@ -285,7 +310,7 @@ export const useGraphStore = create<GraphStore>()(
         });
       });
     },
-  }))
+  })),
 );
 ```
 
@@ -296,7 +321,10 @@ Move the function outside `GraphCanvas` and memoize results in a `Map<string, St
 ```ts
 const labelCache = new Map<string, StructuredLabel>();
 
-export function getStructuredNodeLabel(label: string, kind: string): StructuredLabel {
+export function getStructuredNodeLabel(
+  label: string,
+  kind: string,
+): StructuredLabel {
   const key = `${label}:${kind}`;
   const cached = labelCache.get(key);
   if (cached) return cached;
@@ -344,16 +372,16 @@ These let the compositor promote layers and skip layout recalculation for the re
 
 ## Complexity Summary
 
-| Area | Current | After |
-|---|---|---|
-| Force sim calls per mutation | 2 full sims | 1 sim (D) |
-| Memo recomputes per animation frame | 7 × O(V+E) | 1 × O(nodes) position-only (A) |
-| Viewport pan sim trigger | Yes (whole store dep) | No (C) |
-| Main thread blocking per sim | 50–120 ms | 0 ms (G) |
-| DOM nodes per edge | 2–3 | 0 (H) |
-| Nodes rendered offscreen | All | 0 (I) |
-| Store mutation alloc | Full shallow copy | Structural share (J) |
-| Camera effect restarts per transition | ~16 | 1 (B) |
+| Area                                  | Current               | After                          |
+| ------------------------------------- | --------------------- | ------------------------------ |
+| Force sim calls per mutation          | 2 full sims           | 1 sim (D)                      |
+| Memo recomputes per animation frame   | 7 × O(V+E)            | 1 × O(nodes) position-only (A) |
+| Viewport pan sim trigger              | Yes (whole store dep) | No (C)                         |
+| Main thread blocking per sim          | 50–120 ms             | 0 ms (G)                       |
+| DOM nodes per edge                    | 2–3                   | 0 (H)                          |
+| Nodes rendered offscreen              | All                   | 0 (I)                          |
+| Store mutation alloc                  | Full shallow copy     | Structural share (J)           |
+| Camera effect restarts per transition | ~16                   | 1 (B)                          |
 
 ---
 
@@ -377,13 +405,13 @@ A → C → B → D → E → F → L → M → G → H → I → J → K
 
 ## Files Affected
 
-| File | Changes |
-|---|---|
-| `src/App.tsx` | A, B, C, D, I (node culling in render) |
-| `src/state/graphStore.ts` | D (remove frame/scheduleFrame), F (adjacencyByNode), J (Immer) |
-| `src/lib/layoutEngine.ts` | E (pass childIdsByParent directly), G (extract sim to worker) |
-| `src/components/GraphCanvas.tsx` | H (EdgeCanvas), I (culling), K (label cache) |
-| `src/lib/layoutWorker.ts` | G (new file — Worker entry point) |
-| `src/components/EdgeCanvas.tsx` | H (new file — canvas edge renderer) |
-| `src/lib/graphVisuals.ts` | K (move + cache getStructuredNodeLabel) |
-| `src/App.css` | M (will-change, contain) |
+| File                             | Changes                                                        |
+| -------------------------------- | -------------------------------------------------------------- |
+| `src/App.tsx`                    | A, B, C, D, I (node culling in render)                         |
+| `src/state/graphStore.ts`        | D (remove frame/scheduleFrame), F (adjacencyByNode), J (Immer) |
+| `src/lib/layoutEngine.ts`        | E (pass childIdsByParent directly), G (extract sim to worker)  |
+| `src/components/GraphCanvas.tsx` | H (EdgeCanvas), I (culling), K (label cache)                   |
+| `src/lib/layoutWorker.ts`        | G (new file — Worker entry point)                              |
+| `src/components/EdgeCanvas.tsx`  | H (new file — canvas edge renderer)                            |
+| `src/lib/graphVisuals.ts`        | K (move + cache getStructuredNodeLabel)                        |
+| `src/App.css`                    | M (will-change, contain)                                       |

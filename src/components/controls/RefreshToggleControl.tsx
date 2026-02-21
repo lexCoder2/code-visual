@@ -18,7 +18,9 @@ export function RefreshToggleControl(props: RefreshToggleControlProps) {
   } = props;
 
   return (
-    <div className={`control-item refresh-switch-wrap ${wrapperClassName ?? ""}`}>
+    <div
+      className={`control-item refresh-switch-wrap ${wrapperClassName ?? ""}`}
+    >
       <span className={labelClassName}>{label}</span>
       <button
         type="button"

@@ -43,6 +43,7 @@ Thin fetch wrapper around the proxy. Two modes are detected at startup:
 - **Mock mode** — deterministic in-memory tree, used when the proxy is unreachable
 
 Key functions:
+
 - `listProjects()` — returns root nodes as `ProjectSummary[]`
 - `expandNodePage()` — paginated children for a single parent node
 - `expandNeighborhoodDepth()` — batch-expands to a given depth for background hydration
@@ -52,22 +53,23 @@ Key functions:
 
 All TypeScript interfaces that flow through the system:
 
-| Type | Description |
-|---|---|
-| `GraphNodeEntity` | Stored graph node (id, label, kind, semanticType, depth, expanded, loading) |
-| `GraphEdgeEntity` | Stored edge (id, source, target, label) |
-| `PositionedNode` | Node annotated with `(x, y)` after layout |
-| `PositionedEdge` | Edge ready to render |
-| `LayoutFrame` | `{ nodes: PositionedNode[], edges: PositionedEdge[] }` |
-| `SemanticNodeType` | `function \| class \| import \| export \| variable` |
-| `NodeKind` | `layer \| module \| service \| file` |
-| `ViewportState` | Pan/zoom `{ x, y, scale }` |
+| Type               | Description                                                                 |
+| ------------------ | --------------------------------------------------------------------------- |
+| `GraphNodeEntity`  | Stored graph node (id, label, kind, semanticType, depth, expanded, loading) |
+| `GraphEdgeEntity`  | Stored edge (id, source, target, label)                                     |
+| `PositionedNode`   | Node annotated with `(x, y)` after layout                                   |
+| `PositionedEdge`   | Edge ready to render                                                        |
+| `LayoutFrame`      | `{ nodes: PositionedNode[], edges: PositionedEdge[] }`                      |
+| `SemanticNodeType` | `function \| class \| import \| export \| variable`                         |
+| `NodeKind`         | `layer \| module \| service \| file`                                        |
+| `ViewportState`    | Pan/zoom `{ x, y, scale }`                                                  |
 
 ### `src/state/graphStore.ts`
 
 Zustand store that holds the entire application state. Mutations schedule a `requestAnimationFrame` debounced layout recompute (`scheduleFrame`) to avoid blocking the main thread on every synchronous state change.
 
 Key state:
+
 - `nodesById / edgesById / childIdsByParent` — normalised graph data
 - `manualPositions` — positions overridden by drag
 - `frame` — last computed `LayoutFrame`
@@ -75,6 +77,7 @@ Key state:
 - `connectionDepth / siblingPageByParent` — traversal config
 
 Key mutations:
+
 - `mergeExpansionPage` — adds a paginated batch of children for one parent
 - `mergeExpansionBatch` — multi-parent batch for background hydration
 - `setFocusedNode` — changes the traversal root and recomputes visible depths
@@ -103,10 +106,12 @@ Orchestration and interaction layer. Responsibilities:
 ### `src/components/GraphCanvas.tsx`
 
 Receives a `LayoutFrame` and renders:
+
 - `<svg class="edges">` — one `<g>` per edge: a glow `<path>` + a stroke `<path>` + optional `<text>` label
 - One `<button class="node ...">` per node positioned via CSS `transform: translate(x,y) scale(s)`, classified by kind and semantic type
 
 Node labels are parsed by `getStructuredNodeLabel`:
+
 - File nodes — extracts basename + extension chip + optional `#anchor`
 - Colon-separated labels (imports, namespaced ids) — split into primary + secondary line
 
@@ -114,14 +119,14 @@ Node labels are parsed by `getStructuredNodeLabel`:
 
 All in-canvas controls rendered as a `controlsOverlay` prop overlay:
 
-| Component | Purpose |
-|---|---|
-| `CanvasControls` | Container; hosts all sub-controls; node-type group is right-aligned |
-| `DepthControl` | +/− connection depth buttons |
-| `MotionControl` | Animation speed slider |
+| Component              | Purpose                                                                            |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| `CanvasControls`       | Container; hosts all sub-controls; node-type group is right-aligned                |
+| `DepthControl`         | +/− connection depth buttons                                                       |
+| `MotionControl`        | Animation speed slider                                                             |
 | `RefreshToggleControl` | Generic labelled toggle switch (reused for auto-refresh and each node-type filter) |
-| `SyncBadgeControl` | Passive "Auto refresh On/Off" label + "Syncing…" badge when active |
-| `ProjectControl` | Project selector dropdown |
+| `SyncBadgeControl`     | Passive "Auto refresh On/Off" label + "Syncing…" badge when active                 |
+| `ProjectControl`       | Project selector dropdown                                                          |
 
 ---
 
@@ -159,13 +164,13 @@ App.tsx onNodeDoubleClick → expandNode(nodeId)
 
 `inferSemanticType` in `memgraphClient.ts` maps raw Memgraph node labels to UI types:
 
-| Labels / relation / id prefix | SemanticNodeType |
-|---|---|
-| `Function`, `Method` | `function` |
-| `Class`, `Interface`, `Type` | `class` |
-| `Import`, relation `IMPORTS`, id `import:` | `import` |
-| `Export`, relation `EXPORTS`, id `export:` | `export` |
-| `Variable`, `Const`, `Property` | `variable` |
+| Labels / relation / id prefix              | SemanticNodeType |
+| ------------------------------------------ | ---------------- |
+| `Function`, `Method`                       | `function`       |
+| `Class`, `Interface`, `Type`               | `class`          |
+| `Import`, relation `IMPORTS`, id `import:` | `import`         |
+| `Export`, relation `EXPORTS`, id `export:` | `export`         |
+| `Variable`, `Const`, `Property`            | `variable`       |
 
 Nodes without a match have `semanticType: undefined` and are always visible regardless of filter state.
 
@@ -185,25 +190,25 @@ Node positions are in world space (centre of `CANVAS` = 900, 600). Manual positi
 
 ## Environment Variables
 
-| Variable | Consumed by | Default |
-|---|---|---|
-| `VITE_MEMGRAPH_URL` | Browser fetch (via Vite) | `http://localhost:4000/query` |
-| `MEMGRAPH_BOLT_URL` | Node proxy (`dotenv`) | `bolt://localhost:7687` |
-| `MEMGRAPH_BOLT_USER` | Node proxy | _(empty)_ |
-| `MEMGRAPH_BOLT_PASSWORD` | Node proxy | _(empty)_ |
-| `MEMGRAPH_PROXY_PORT` | Node proxy | `4000` |
+| Variable                 | Consumed by              | Default                       |
+| ------------------------ | ------------------------ | ----------------------------- |
+| `VITE_MEMGRAPH_URL`      | Browser fetch (via Vite) | `http://localhost:4000/query` |
+| `MEMGRAPH_BOLT_URL`      | Node proxy (`dotenv`)    | `bolt://localhost:7687`       |
+| `MEMGRAPH_BOLT_USER`     | Node proxy               | _(empty)_                     |
+| `MEMGRAPH_BOLT_PASSWORD` | Node proxy               | _(empty)_                     |
+| `MEMGRAPH_PROXY_PORT`    | Node proxy               | `4000`                        |
 
 ---
 
 ## Local Storage Keys
 
-| Key | Type | Purpose |
-|---|---|---|
-| `code-visual:motionSpeedFactor` | `number` | Animation speed multiplier |
-| `code-visual:connectionDepth` | `number` | Traversal depth |
-| `code-visual:nodeTypeFilters` | `JSON` | Per-type visibility flags |
-| `code-visual:selectedProjectId` | `string` | Last selected project |
-| `code-visual:autoRefreshEnabled` | `boolean` | Auto-refresh toggle |
+| Key                              | Type      | Purpose                    |
+| -------------------------------- | --------- | -------------------------- |
+| `code-visual:motionSpeedFactor`  | `number`  | Animation speed multiplier |
+| `code-visual:connectionDepth`    | `number`  | Traversal depth            |
+| `code-visual:nodeTypeFilters`    | `JSON`    | Per-type visibility flags  |
+| `code-visual:selectedProjectId`  | `string`  | Last selected project      |
+| `code-visual:autoRefreshEnabled` | `boolean` | Auto-refresh toggle        |
 
 ---
 
