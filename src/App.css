@@ -38,6 +38,12 @@
   min-width: 0;
 }
 
+.app-header-logo {
+  flex-shrink: 0;
+  display: block;
+  filter: drop-shadow(1px 1.5px 2px rgba(55, 90, 185, 0.22));
+}
+
 .app-header-chip {
   display: inline-flex;
   align-items: center;

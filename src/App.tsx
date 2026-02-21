@@ -14,6 +14,7 @@ import { getDepthVisual } from "./lib/graphVisuals";
 import { useGraphStore } from "./state/graphStore";
 import type { SemanticNodeType } from "./types/graph";
 import { computeLayoutFrame } from "./lib/layoutEngine";
+import { LogoIcon } from "./assets/LogoIcon";
 
 const NODE_TYPE_FILTERS: SemanticNodeType[] = [
   "function",
@@ -609,6 +610,7 @@ function App() {
     <main className="app-shell theme-neumorph">
       <header className="app-header">
         <div className="app-header-title-wrap">
+          <LogoIcon size={26} className="app-header-logo" />
           <h1 className="app-header-title">Code Visual</h1>
           <span className={`app-header-chip ${connectionChip.tone}`}>
             {connectionChip.label}
