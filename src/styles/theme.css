@@ -1,0 +1,37 @@
+:root {
+  --cv-bg: #dfe3ea;
+  --cv-surface: #e9edf3;
+  --cv-surface-strong: #eef2f7;
+  --cv-surface-soft: #e4e8ef;
+  --cv-text: #252a36;
+  --cv-text-muted: #697184;
+  --cv-line: rgba(46, 56, 78, 0.16);
+  --cv-line-strong: rgba(36, 46, 67, 0.24);
+  --cv-accent: #2f5ef4;
+  --cv-glass: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0.24)
+  );
+  --cv-shadow-outer:
+    8px 8px 18px rgba(121, 130, 149, 0.26),
+    -8px -8px 18px rgba(255, 255, 255, 0.72);
+  --cv-shadow-soft:
+    4px 4px 10px rgba(128, 136, 153, 0.22),
+    -3px -3px 9px rgba(255, 255, 255, 0.68);
+  --cv-shadow-inset:
+    inset 1px 1px 2px rgba(255, 255, 255, 0.72),
+    inset -1px -1px 2px rgba(130, 137, 151, 0.2);
+}
+
+.theme-neumorph {
+  --cv-bg: #dde1e8;
+  --cv-surface: #e8ecf2;
+  --cv-surface-strong: #edf1f7;
+  --cv-surface-soft: #e3e7ee;
+  --cv-text: #262b37;
+  --cv-text-muted: #677083;
+  --cv-line: rgba(42, 52, 74, 0.16);
+  --cv-line-strong: rgba(34, 43, 61, 0.22);
+  --cv-accent: #416df2;
+}
