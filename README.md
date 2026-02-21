@@ -4,6 +4,8 @@
 
 ![Code Visual screenshot](docs/screenshot.png)
 
+> **Works with [code-graph-server](https://github.com/lexCoder2/code-graph-server)** — an MCP tool for VS Code and Claude that analyses your codebase and populates Memgraph with nodes and relationships. Code Visual is the visual front-end for that graph.
+
 Code Visual connects to a Memgraph database and renders the relationships between projects, modules, files, and code entities as an interactive force-directed graph. Expand nodes, change depth, filter by semantic type, and drag the canvas to explore your architecture at a glance.
 
 ## Features

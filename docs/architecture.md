@@ -2,7 +2,11 @@
 
 ## Overview
 
-Code Visual is a single-page React application that queries a Memgraph graph database and renders the result as an interactive force-directed graph. The app is split into four clear layers: **data access → state store → layout engine → render**.
+Code Visual is the visual front-end for **[code-graph-server](https://github.com/lexCoder2/code-graph-server)**, an MCP (Model Context Protocol) tool that integrates with VS Code and Claude to analyse a codebase and store its structure — files, modules, functions, classes, imports, exports, and their relationships — as nodes and edges in a Memgraph database.
+
+Code Visual then connects to that same Memgraph instance and renders the stored graph as an interactive force-directed diagram, giving developers a live, navigable map of their codebase.
+
+The app is split into four clear layers: **data access → state store → layout engine → render**.
 
 ```
 Memgraph (Bolt)
